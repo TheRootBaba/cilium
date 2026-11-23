@@ -32,7 +32,9 @@ Set the default when installing or upgrading Cilium:
    clustermesh:
      defaultGlobalNamespace: false
 
-The namespace annotation overrides the default. Mark a namespace global:
+The namespace annotation overrides the default. Namespace annotations are
+cluster-local, so mark the namespace global in every cluster where it must be
+exported. For example:
 
 .. code-block:: shell-session
 
