@@ -7,6 +7,11 @@ Global Services
 This tutorial will guide you to perform load-balancing and service discovery
 across multiple Kubernetes clusters using Cilium Global Services.
 
+Namespace export is an additional prerequisite: a Global Service must be in a
+global namespace as well as carry the service annotation. See
+:ref:`clustermesh_namespace_export` for the namespace default and annotation
+settings.
+
 Prerequisites
 #############
 
@@ -117,15 +122,15 @@ Deploying a Simple Example Service
 
    .. parsed-literal::
 
-       kubectl apply -f \ |SCM_WEB|\/examples/kubernetes/clustermesh/cluster1.yaml
-       kubectl apply -f \ |SCM_WEB|\/examples/kubernetes/clustermesh/global-service-example.yaml
+       kubectl apply -f \\ |SCM_WEB|\\/examples/kubernetes/clustermesh/cluster1.yaml
+       kubectl apply -f \\ |SCM_WEB|\\/examples/kubernetes/clustermesh/global-service-example.yaml
 
 2. In cluster 2, deploy:
 
    .. parsed-literal::
 
-       kubectl apply -f \ |SCM_WEB|\/examples/kubernetes/clustermesh/cluster2.yaml
-       kubectl apply -f \ |SCM_WEB|\/examples/kubernetes/clustermesh/global-service-example.yaml
+       kubectl apply -f \\ |SCM_WEB|\\/examples/kubernetes/clustermesh/cluster2.yaml
+       kubectl apply -f \\ |SCM_WEB|\\/examples/kubernetes/clustermesh/global-service-example.yaml
 
 3. From either cluster, access the global service:
 
@@ -186,16 +191,16 @@ clusters for the service under examination.
    The flow chart was generated on https://mermaid.live with code:
 
    flowchart LR
-      Cluster1Global{Cluster1\nGlobal?}-->|yes|Cluster2Global{Cluster2\nGlobal?}
-      Cluster2Global-->|yes|Cluster1Shared{Cluster1\nShared?}
+      Cluster1Global{Cluster1\\nGlobal?}-->|yes|Cluster2Global{Cluster2\\nGlobal?}
+      Cluster2Global-->|yes|Cluster1Shared{Cluster1\\nShared?}
 
-      Cluster1Shared-->|yes|Cluster2Shared{Cluster2\nShared?}
-      Cluster2Shared-->|yes|Cluster1BothCluster2Both[Cluster1: Local + Remote\nCluster2: Local + Remote]
-      Cluster2Shared-->|no|Cluster1SelfClusterBoth[Cluster1: Local only\nCluster2: Local + Remote]
+      Cluster1Shared-->|yes|Cluster2Shared{Cluster2\\nShared?}
+      Cluster2Shared-->|yes|Cluster1BothCluster2Both[Cluster1: Local + Remote\\nCluster2: Local + Remote]
+      Cluster2Shared-->|no|Cluster1SelfClusterBoth[Cluster1: Local only\\nCluster2: Local + Remote]
 
-      Cluster1Shared-->|no|Cluster2Shared2{Cluster2\nShared?}
-      Cluster2Shared2-->|yes|Cluster1BothCluster2Self[Cluster1: Local + Remote\nCluster2: Local only]
-      Cluster2Shared2-->|no|Cluster1SelfCluster2Self[Cluster1: Local only\nCluster2: Local only]
+      Cluster1Shared-->|no|Cluster2Shared2{Cluster2\\nShared?}
+      Cluster2Shared2-->|yes|Cluster1BothCluster2Self[Cluster1: Local + Remote\\nCluster2: Local only]
+      Cluster2Shared2-->|no|Cluster1SelfCluster2Self[Cluster1: Local only\\nCluster2: Local only]
 
       Cluster1Global-->|no|Cluster1SelfCluster2Self
       Cluster2Global-->|no|Cluster1SelfCluster2Self
@@ -218,19 +223,3 @@ enable it, set ``clustermesh.cacheTTL`` to a duration greater than zero (e.g., `
 .. cilium-helm-upgrade::
    :namespace: kube-system
    :extra-args: --reuse-values
-   :set: clustermesh.cacheTTL="15m"
-
-Limitations
-###########
-
-* Global NodePort services load balance across both local and remote backends only
-  if Cilium is configured to replace kube-proxy (``kubeProxyReplacement=true``).
-  Otherwise, only local backends are eligible for
-  load balancing when accessed through the NodePort.
-
-* Global services accessed by a Node, or a Pod running in host network, load
-  balance across both local and remote backends only if Cilium is configured
-  to replace kube-proxy (``kubeProxyReplacement=true``). This limitation can be
-  overcome enabling SocketLB in the host namespace: ``socketLB.enabled=true``,
-  ``socketLB.hostNamespaceOnly=true``. Otherwise, only local backends are eligible
-  for load balancing.
