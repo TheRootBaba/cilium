@@ -18,5 +18,6 @@ Multi-cluster Networking
    intro
    setup
    load-balancing
+   namespace-export
    policy
    affinity
