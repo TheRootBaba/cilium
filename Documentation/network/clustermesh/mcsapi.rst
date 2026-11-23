@@ -45,19 +45,19 @@ configure CoreDNS manually, you need to execute the following steps:
    .. parsed-literal::
 
       # (optional) Install MCS-API CRDs if Cilium has not yet started or automatic CRDs installation is disabled
-      kubectl apply -f |SCM_WEB|\\/vendor/sigs.k8s.io/mcs-api/config/crd/multicluster.x-k8s.io_serviceexports.yaml
-      kubectl apply -f |SCM_WEB|\\/vendor/sigs.k8s.io/mcs-api/config/crd/multicluster.x-k8s.io_serviceimports.yaml
+      kubectl apply -f |SCM_WEB|\/vendor/sigs.k8s.io/mcs-api/config/crd/multicluster.x-k8s.io_serviceexports.yaml
+      kubectl apply -f |SCM_WEB|\/vendor/sigs.k8s.io/mcs-api/config/crd/multicluster.x-k8s.io_serviceimports.yaml
 
       # Adding RBAC to read ServiceImports
-      kubectl create clusterrole coredns-mcsapi \\\\
+      kubectl create clusterrole coredns-mcsapi \\
          --verb=list,watch --resource=serviceimports.multicluster.x-k8s.io
-      kubectl create clusterrolebinding coredns-mcsapi \\\\
+      kubectl create clusterrolebinding coredns-mcsapi \\
          --clusterrole=coredns-mcsapi --serviceaccount=kube-system:coredns
 
       # Configure CoreDNS to support MCS-API
-      kubectl get configmap -n kube-system coredns -o yaml | \\\\
-         sed -e 's/cluster\\.local/cluster.local clusterset.local/g' | \\\\
-         sed -E 's/^(.*)kubernetes(.*)\\{/\\1kubernetes\\2{\\n\\1   multicluster clusterset.local/' | \\\\
+      kubectl get configmap -n kube-system coredns -o yaml | \\
+         sed -e 's/cluster\.local/cluster.local clusterset.local/g' | \\
+         sed -E 's/^(.*)kubernetes(.*)\{/\1kubernetes\2{\n\1   multicluster clusterset.local/' | \\
          kubectl replace -f-
 
       # Rollout CoreDNS to apply the change
@@ -150,15 +150,15 @@ Deploying a Simple Example Service using MCS-API
 
    .. parsed-literal::
 
-       kubectl apply -f \\ |SCM_WEB|\\/examples/kubernetes/clustermesh/cluster1.yaml
-       kubectl apply -f \\ |SCM_WEB|\\/examples/kubernetes/clustermesh/mcsapi-example.yaml
+       kubectl apply -f \ |SCM_WEB|\/examples/kubernetes/clustermesh/cluster1.yaml
+       kubectl apply -f \ |SCM_WEB|\/examples/kubernetes/clustermesh/mcsapi-example.yaml
 
 2. In cluster 2, deploy:
 
    .. parsed-literal::
 
-       kubectl apply -f \\ |SCM_WEB|\\/examples/kubernetes/clustermesh/cluster2.yaml
-       kubectl apply -f \\ |SCM_WEB|\\/examples/kubernetes/clustermesh/mcsapi-example.yaml
+       kubectl apply -f \ |SCM_WEB|\/examples/kubernetes/clustermesh/cluster2.yaml
+       kubectl apply -f \ |SCM_WEB|\/examples/kubernetes/clustermesh/mcsapi-example.yaml
 
 3. From either cluster, access the exported service:
 
@@ -189,10 +189,10 @@ ServiceImport backend, for example:
         namespace: default
       rules:
       - backendRefs:
-      - group: multicluster.x-k8s.io
-        kind: ServiceImport
-        name: rebel-base-mcsapi
-        port: 80
+        - group: multicluster.x-k8s.io
+          kind: ServiceImport
+          name: rebel-base-mcsapi
+          port: 80
         matches:
         - method: GET
           path:
